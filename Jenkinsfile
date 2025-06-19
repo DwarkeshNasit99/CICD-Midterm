@@ -1,62 +1,97 @@
 pipeline {
   agent any
+
   environment {
-    REGISTRY = 'docker.io'
-    IMAGE_NAME = 'midterm-app'
-    NODE_ENV = 'development'
+    NODE_VERSION = '16'
+    DOCKER_IMAGE = 'ci-cd-midterm'
+    DOCKER_TAG = 'latest'
   }
-  parameters {
-    choice(name: 'ENVIRONMENT', choices: ['dev', 'prod'], description: 'Select deployment environment')
-  }
+
   stages {
-    stage('Checkout') {
+    stage('Setup') {
       steps {
+        // Clean workspace
+        cleanWs()
+        // Checkout code
         checkout scm
+        // Setup Node.js
+        nodejs(nodeJSInstallationName: 'Node ' + NODE_VERSION) {
+          sh 'node --version'
+          sh 'npm --version'
+        }
       }
     }
-    stage('Install') {
+
+    stage('Install Dependencies') {
       steps {
-        sh 'npm ci'
+        nodejs(nodeJSInstallationName: 'Node ' + NODE_VERSION) {
+          sh 'npm ci'
+        }
       }
     }
+
     stage('Lint') {
       steps {
-        sh 'npm run lint'
+        nodejs(nodeJSInstallationName: 'Node ' + NODE_VERSION) {
+          sh 'npm run lint'
+        }
       }
     }
+
     stage('Test') {
       steps {
-        sh 'npm test'
+        nodejs(nodeJSInstallationName: 'Node ' + NODE_VERSION) {
+          sh 'npm test'
+        }
       }
     }
+
     stage('Build Docker Image') {
       steps {
         script {
-          sh "docker build -t $REGISTRY/$IMAGE_NAME:${params.ENVIRONMENT} ."
+          // Build Docker image
+          docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
         }
       }
     }
-    stage('Push Docker Image') {
+
+    stage('Deploy Development') {
       when {
-        expression { return params.ENVIRONMENT == 'prod' }
+        branch 'develop'
       }
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-          sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin $REGISTRY'
-          sh "docker push $REGISTRY/$IMAGE_NAME:${params.ENVIRONMENT}"
-        }
-      }
-    }
-    stage('Deploy') {
       steps {
         script {
-          if (params.ENVIRONMENT == 'dev') {
-            echo 'Deploying to development environment (simulated)'
-          } else {
-            echo 'Deploying to production environment (simulated)'
-          }
+          echo 'Deploying to development environment'
+          // Add deployment steps for dev environment
         }
       }
+    }
+
+    stage('Deploy Production') {
+      when {
+        branch 'main'
+      }
+      steps {
+        script {
+          echo 'Deploying to production environment'
+          // Add deployment steps for prod environment
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+      // Clean up Docker images
+      sh 'docker system prune -f'
+      // Clean workspace
+      cleanWs()
+    }
+    success {
+      echo 'Pipeline completed successfully!'
+    }
+    failure {
+      echo 'Pipeline failed! Check the logs for details.'
     }
   }
 } 
