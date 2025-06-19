@@ -7,7 +7,7 @@ describe('API Integration Tests', () => {
       const response = await request(app).get('/');
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('message');
-      expect(response.body.message).toContain('CI/CD Midterm Application');
+      expect(response.body.message).toBe('Welcome to CI/CD Midterm Application');
     });
   });
 
@@ -17,25 +17,24 @@ describe('API Integration Tests', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('status', 'healthy');
       expect(response.body).toHaveProperty('uptime');
+      expect(response.body).toHaveProperty('timestamp');
     });
   });
 
   describe('GET /api/calculator/add', () => {
     test('should add two numbers correctly', async () => {
-      const response = await request(app)
-        .get('/api/calculator/add')
-        .query({ a: 5, b: 3 });
-      
+      const response = await request(app).get('/api/calculator/add?a=5&b=3');
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('result', 8);
-      expect(response.body).toHaveProperty('operation', 'add');
+      expect(response.body).toEqual({
+        result: 8,
+        operation: 'add',
+        a: 5,
+        b: 3
+      });
     });
 
     test('should return 400 for missing parameters', async () => {
-      const response = await request(app)
-        .get('/api/calculator/add')
-        .query({ a: 5 });
-      
+      const response = await request(app).get('/api/calculator/add?a=5');
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('error');
     });
@@ -43,31 +42,30 @@ describe('API Integration Tests', () => {
 
   describe('GET /api/calculator/subtract', () => {
     test('should subtract two numbers correctly', async () => {
-      const response = await request(app)
-        .get('/api/calculator/subtract')
-        .query({ a: 5, b: 3 });
-      
+      const response = await request(app).get('/api/calculator/subtract?a=5&b=3');
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('result', 2);
-      expect(response.body).toHaveProperty('operation', 'subtract');
+      expect(response.body).toEqual({
+        result: 2,
+        operation: 'subtract',
+        a: 5,
+        b: 3
+      });
     });
   });
 
   describe('GET /api/string/reverse', () => {
     test('should reverse a string correctly', async () => {
-      const response = await request(app)
-        .get('/api/string/reverse')
-        .query({ text: 'hello' });
-      
+      const response = await request(app).get('/api/string/reverse?text=hello');
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('result', 'olleh');
-      expect(response.body).toHaveProperty('operation', 'reverse');
+      expect(response.body).toEqual({
+        result: 'olleh',
+        original: 'hello',
+        operation: 'reverse'
+      });
     });
 
     test('should return 400 for missing text parameter', async () => {
-      const response = await request(app)
-        .get('/api/string/reverse');
-      
+      const response = await request(app).get('/api/string/reverse');
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('error');
     });
@@ -75,13 +73,13 @@ describe('API Integration Tests', () => {
 
   describe('GET /api/string/capitalize', () => {
     test('should capitalize first letter correctly', async () => {
-      const response = await request(app)
-        .get('/api/string/capitalize')
-        .query({ text: 'hello' });
-      
+      const response = await request(app).get('/api/string/capitalize?text=hello');
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('result', 'Hello');
-      expect(response.body).toHaveProperty('operation', 'capitalize');
+      expect(response.body).toEqual({
+        result: 'Hello',
+        original: 'hello',
+        operation: 'capitalize'
+      });
     });
   });
 

@@ -2,30 +2,38 @@ const calculator = require('../src/calculator');
 
 describe('Calculator Tests', () => {
   describe('add function', () => {
-    test('should add two positive numbers correctly', () => {
+    test('should add two positive numbers', () => {
       expect(calculator.add(2, 3)).toBe(5);
     });
 
-    test('should add negative numbers correctly', () => {
+    test('should handle negative numbers', () => {
+      expect(calculator.add(-2, 3)).toBe(1);
+      expect(calculator.add(2, -3)).toBe(-1);
       expect(calculator.add(-2, -3)).toBe(-5);
     });
 
-    test('should add zero correctly', () => {
+    test('should handle zero', () => {
+      expect(calculator.add(0, 5)).toBe(5);
       expect(calculator.add(5, 0)).toBe(5);
+      expect(calculator.add(0, 0)).toBe(0);
     });
   });
 
   describe('subtract function', () => {
-    test('should subtract two positive numbers correctly', () => {
+    test('should subtract two positive numbers', () => {
       expect(calculator.subtract(5, 3)).toBe(2);
     });
 
-    test('should subtract negative numbers correctly', () => {
+    test('should handle negative numbers', () => {
+      expect(calculator.subtract(-2, 3)).toBe(-5);
+      expect(calculator.subtract(2, -3)).toBe(5);
       expect(calculator.subtract(-2, -3)).toBe(1);
     });
 
-    test('should subtract zero correctly', () => {
+    test('should handle zero', () => {
       expect(calculator.subtract(5, 0)).toBe(5);
+      expect(calculator.subtract(0, 5)).toBe(-5);
+      expect(calculator.subtract(0, 0)).toBe(0);
     });
   });
 

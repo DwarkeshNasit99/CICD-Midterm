@@ -28,4 +28,4 @@ const stringUtils = {
   }
 };
 
-module.exports = { stringUtils }; 
+module.exports = { stringUtils };
