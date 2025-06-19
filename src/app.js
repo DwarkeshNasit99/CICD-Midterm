@@ -72,8 +72,10 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
+// Export the app before starting the server
+module.exports = app;
+
+// Only start the server if run directly
 if (require.main === module) {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
-
-module.exports = app;
