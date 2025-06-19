@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const { stringUtils } = require('./stringUtils');
 const calculator = require('./calculator');
 const app = express();
