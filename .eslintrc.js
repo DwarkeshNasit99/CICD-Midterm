@@ -4,20 +4,18 @@ module.exports = {
     es2021: true,
     jest: true
   },
-  extends: [
-    'eslint:recommended'
-  ],
+  extends: 'eslint:recommended',
   parserOptions: {
     ecmaVersion: 12,
     sourceType: 'module'
   },
   rules: {
-    'indent': ['error', 2],
     'linebreak-style': ['error', 'unix'],
+    'no-console': 'off',  // Allow console statements since this is a backend app
+    'indent': ['error', 2],
     'quotes': ['error', 'single'],
     'semi': ['error', 'always'],
     'no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }],
-    'no-console': 'warn',
     'prefer-const': 'error',
     'no-var': 'error',
     'object-shorthand': 'error',
