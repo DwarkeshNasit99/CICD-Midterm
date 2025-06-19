@@ -45,7 +45,7 @@ app.get('/health', (req, res) => {
 });
 
 // --- Error handler for API routes only ---
-app.use('/api', (err, req, res, next) => {
+app.use('/api', (err, req, res, _next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
