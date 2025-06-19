@@ -5,8 +5,6 @@ const calculator = require('./calculator');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(express.static(path.join(__dirname, '../public')));
-
 // Welcome endpoint
 app.get('/', (req, res) => {
   res.json({
