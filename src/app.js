@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const { stringUtils } = require('./stringUtils');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -24,15 +25,22 @@ app.get('/api/calculator/subtract', (req, res) => {
 app.get('/api/string/reverse', (req, res) => {
   const { text } = req.query;
   if (!text) return res.status(400).json({ error: 'text parameter is required' });
-  const result = text.split('').reverse().join('');
+  const result = stringUtils.reverse(text);
   res.json({ result, original: text, operation: 'reverse' });
 });
 
 app.get('/api/string/capitalize', (req, res) => {
   const { text } = req.query;
   if (!text) return res.status(400).json({ error: 'text parameter is required' });
-  const result = text.charAt(0).toUpperCase() + text.slice(1);
+  const result = stringUtils.capitalize(text);
   res.json({ result, original: text, operation: 'capitalize' });
+});
+
+app.get('/api/string/vowels', (req, res) => {
+  const { text } = req.query;
+  if (!text) return res.status(400).json({ error: 'text parameter is required' });
+  const result = stringUtils.countVowels(text);
+  res.json({ result, original: text, operation: 'countVowels' });
 });
 
 // --- Health Endpoint ---
@@ -55,10 +63,9 @@ app.use('/api', (req, res) => {
   res.status(404).json({ error: 'API route not found' });
 });
 
-if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}
-
 module.exports = app;
+
+// Only start the server if run directly
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}

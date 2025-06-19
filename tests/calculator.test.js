@@ -1,4 +1,4 @@
-const { calculator } = require('../src/app');
+const calculator = require('../src/calculator');
 
 describe('Calculator Tests', () => {
   describe('add function', () => {
