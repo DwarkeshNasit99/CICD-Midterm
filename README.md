@@ -1,15 +1,48 @@
-# CI/CD Midterm Application
+# CI/CD Midterm Project
 
-A Node.js Express app with a full CI/CD pipeline using both GitHub Actions and Jenkins, Docker support, and a modern API/UI.
+A Node.js application demonstrating CI/CD pipeline implementation using GitHub Actions.
 
-## 🚀 Features
+## Features
 
-- RESTful API (Calculator & String Utils)
-- Modern HTML UI
-- Dockerized
-- CI/CD with GitHub Actions **and** Jenkins
-- Health check endpoint
-- Linting & Testing
+- Calculator API with add, subtract, multiply, and divide operations
+- String Utils API with reverse, capitalize, and vowel counting operations
+- Comprehensive test suite
+- GitHub Actions CI/CD pipeline
+- Environment-specific configurations
+
+## API Endpoints
+
+### Calculator API
+- GET `/api/calculator/add?a=5&b=3` - Adds two numbers
+- GET `/api/calculator/subtract?a=5&b=3` - Subtracts two numbers
+- GET `/api/calculator/multiply?a=5&b=3` - Multiplies two numbers
+- GET `/api/calculator/divide?a=6&b=2` - Divides two numbers
+
+### String Utils API
+- GET `/api/string/reverse?text=hello` - Reverses a string
+- GET `/api/string/capitalize?text=hello` - Capitalizes first letter
+- GET `/api/string/vowels?text=hello` - Counts vowels in a string
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+
+# Start server
+npm start
+```
+
+## CI/CD Pipeline
+
+The project uses GitHub Actions for continuous integration and deployment:
+
+1. Runs on push to main branch and pull requests
+2. Executes linting and tests
+3. Simulates build and deployment steps
 
 ## 🛠️ Setup & Installation
 
