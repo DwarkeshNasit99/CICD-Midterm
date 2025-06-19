@@ -1,23 +1,32 @@
 const express = require('express');
 const path = require('path');
 const { stringUtils } = require('./stringUtils');
+const calculator = require('./calculator');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Welcome endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to CI/CD Midterm Application',
+    version: '1.0.0'
+  });
+});
+
 // --- Calculator API ---
 app.get('/api/calculator/add', (req, res) => {
   const { a, b } = req.query;
   if (!a || !b) return res.status(400).json({ error: 'Both a and b parameters are required' });
-  const result = Number(a) + Number(b);
+  const result = calculator.add(Number(a), Number(b));
   res.json({ result, operation: 'add', a: Number(a), b: Number(b) });
 });
 
 app.get('/api/calculator/subtract', (req, res) => {
   const { a, b } = req.query;
   if (!a || !b) return res.status(400).json({ error: 'Both a and b parameters are required' });
-  const result = Number(a) - Number(b);
+  const result = calculator.subtract(Number(a), Number(b));
   res.json({ result, operation: 'subtract', a: Number(a), b: Number(b) });
 });
 
@@ -52,20 +61,19 @@ app.get('/health', (req, res) => {
   });
 });
 
-// --- Error handler for API routes only ---
+// --- Error handler for API routes ---
 app.use('/api', (err, req, res, _next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// --- 404 for API routes only ---
-app.use('/api', (req, res) => {
-  res.status(404).json({ error: 'API route not found' });
+// --- 404 handler ---
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
 });
 
-module.exports = app;
-
-// Only start the server if run directly
 if (require.main === module) {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
+
+module.exports = app;
