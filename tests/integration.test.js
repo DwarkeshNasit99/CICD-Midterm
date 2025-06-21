@@ -11,6 +11,15 @@ describe('API Integration Tests', () => {
     });
   });
 
+  describe('GET /api', () => {
+    test('should return API welcome message and links', async () => {
+      const response = await request(app).get('/api');
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('message', 'Welcome to the CI/CD Midterm Application API');
+      expect(response.body).toHaveProperty('links');
+    });
+  });
+
   describe('GET /', () => {
     test('should return HTML content', async () => {
         const response = await request(app).get('/');
