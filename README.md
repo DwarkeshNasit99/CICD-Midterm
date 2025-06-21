@@ -56,7 +56,7 @@ The workflow is automatically triggered by the following events:
 *   **Pull Request:** On any pull request targeting the `main` or `develop` branches.
 *   **Manual Trigger (`workflow_dispatch`):** Allows for manual execution of the pipeline, with the ability to choose the target deployment environment (`dev` or `prod`).
 
-### Pipeline Jobs
+## Pipeline Jobs
 
 The pipeline consists of three sequential jobs:
 
