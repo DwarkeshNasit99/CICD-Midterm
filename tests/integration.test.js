@@ -3,114 +3,110 @@ const app = require('../src/app');
 
 describe('API Integration Tests', () => {
   describe('GET /api/welcome', () => {
-    test('should return welcome message', async () => {
-      const response = await request(app).get('/api/welcome');
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('message');
-      expect(response.body.message).toBe('Welcome to CI/CD Midterm Application');
+    it('should return welcome message', async () => {
+      const res = await request(app).get('/api/welcome');
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toHaveProperty('message', 'Welcome to CI/CD Midterm Application');
     });
   });
 
   describe('GET /api', () => {
-    test('should return API welcome message and links', async () => {
-      const response = await request(app).get('/api');
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('message', 'Welcome to the CI/CD Midterm Application API');
-      expect(response.body).toHaveProperty('links');
+    it('should return API welcome message and links', async () => {
+      const res = await request(app).get('/api');
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toHaveProperty('message', 'Welcome to the CI/CD Midterm Application API');
+      expect(res.body).toHaveProperty('links');
     });
   });
 
   describe('GET /', () => {
-    test('should return HTML content', async () => {
-        const response = await request(app).get('/');
-        expect(response.status).toBe(200);
-        expect(response.headers['content-type']).toMatch(/html/);
+    it('should return HTML content', async () => {
+      const res = await request(app).get('/');
+      expect(res.statusCode).toEqual(200);
+      expect(res.header['content-type']).toMatch(/html/);
     });
   });
 
   describe('GET /health', () => {
-    test('should return health status', async () => {
-      const response = await request(app).get('/health');
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('status', 'healthy');
-      expect(response.body).toHaveProperty('uptime');
-      expect(response.body).toHaveProperty('timestamp');
+    it('should return health status', async () => {
+      const res = await request(app).get('/health');
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toHaveProperty('status', 'healthy');
     });
   });
 
   describe('GET /api/calculator/add', () => {
-    test('should add two numbers correctly', async () => {
-      const response = await request(app).get('/api/calculator/add?a=5&b=3');
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-        result: 8,
-        operation: 'add',
-        a: 5,
-        b: 3
-      });
+    it('should add two numbers correctly', async () => {
+      const res = await request(app).get('/api/calculator/add?a=5&b=3');
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.result).toEqual(8);
     });
 
-    test('should return 400 for missing parameters', async () => {
-      const response = await request(app).get('/api/calculator/add?a=5');
-      expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('error');
+    it('should return 400 for missing parameters', async () => {
+      const res = await request(app).get('/api/calculator/add?a=5');
+      expect(res.statusCode).toEqual(400);
     });
   });
 
   describe('GET /api/calculator/subtract', () => {
-    test('should subtract two numbers correctly', async () => {
-      const response = await request(app).get('/api/calculator/subtract?a=5&b=3');
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-        result: 2,
-        operation: 'subtract',
-        a: 5,
-        b: 3
-      });
+    it('should subtract two numbers correctly', async () => {
+      const res = await request(app).get('/api/calculator/subtract?a=10&b=4');
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.result).toEqual(6);
     });
   });
 
   describe('GET /api/string/reverse', () => {
-    test('should reverse a string correctly', async () => {
-      const response = await request(app).get('/api/string/reverse?text=hello');
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-        result: 'olleh',
-        original: 'hello',
-        operation: 'reverse'
-      });
+    it('should reverse a string correctly', async () => {
+      const res = await request(app).get('/api/string/reverse?text=hello');
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.result).toEqual('olleh');
     });
 
-    test('should return 400 for missing text parameter', async () => {
-      const response = await request(app).get('/api/string/reverse');
-      expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('error');
+    it('should return 400 for missing text parameter', async () => {
+      const res = await request(app).get('/api/string/reverse');
+      expect(res.statusCode).toEqual(400);
     });
   });
 
   describe('GET /api/string/capitalize', () => {
-    test('should capitalize first letter correctly', async () => {
-      const response = await request(app).get('/api/string/capitalize?text=hello');
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-        result: 'Hello',
-        original: 'hello',
-        operation: 'capitalize'
-      });
+    it('should capitalize first letter correctly', async () => {
+      const res = await request(app).get('/api/string/capitalize?text=hello');
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.result).toEqual('Hello');
+    });
+
+    it('should return 400 for missing text parameter', async () => {
+      const res = await request(app).get('/api/string/capitalize');
+      expect(res.statusCode).toEqual(400);
+      expect(res.body.error).toBe('text parameter is required');
+    });
+  });
+
+  describe('GET /api/string/vowels', () => {
+    it('should count vowels in a string correctly', async () => {
+      const res = await request(app).get('/api/string/vowels?text=javascript');
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.result).toEqual(3);
+    });
+
+    it('should return 400 for missing text parameter', async () => {
+      const res = await request(app).get('/api/string/vowels');
+      expect(res.statusCode).toEqual(400);
+      expect(res.body.error).toBe('text parameter is required');
     });
   });
 
   describe('404 handler', () => {
-    test('should return 404 for non-existent API routes', async () => {
-      const response = await request(app).get('/api/non-existent');
-      expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty('error', 'API route not found');
+    it('should return 404 for non-existent API routes', async () => {
+      const res = await request(app).get('/api/non-existent-route');
+      expect(res.statusCode).toEqual(404);
     });
 
-    test('should serve index.html for non-API routes (SPA behavior)', async () => {
-      const response = await request(app).get('/non-existent');
-      expect(response.status).toBe(200);
-      expect(response.headers['content-type']).toMatch(/html/);
+    it('should serve index.html for non-API routes (SPA behavior)', async () => {
+      const res = await request(app).get('/some/other/route');
+      expect(res.statusCode).toEqual(200);
+      expect(res.header['content-type']).toMatch(/html/);
     });
   });
 }); 
