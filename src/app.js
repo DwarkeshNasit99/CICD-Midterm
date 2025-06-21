@@ -8,18 +8,21 @@ const PORT = process.env.PORT || 3001;
 // Define the absolute path to the public directory
 const publicPath = path.join(__dirname, '..', 'public');
 
-// --- Middleware: Serve Static Files ---
-// This is first. It automatically serves index.html for GET / and other static assets.
+// 1. Serve static files first. This will serve public/index.html for GET /.
 app.use(express.static(publicPath));
 
-// --- API Routes ---
-// All your API endpoints are defined here.
+// 2. Define all specific API routes.
 app.get('/api', (req, res) => {
   res.json({
     message: 'Welcome to the CI/CD Midterm Application API',
     version: '1.0.0',
     links: [ { rel: 'health', href: '/health' } ]
   });
+});
+
+// THIS ROUTE WAS MISSING FOR THE TEST
+app.get('/api/welcome', (req, res) => {
+  res.json({ message: 'Welcome to CI/CD Midterm Application' });
 });
 
 app.get('/health', (req, res) => {
@@ -56,15 +59,22 @@ app.get('/api/string/vowels', (req, res) => {
   res.json({ result: stringUtils.countVowels(text) });
 });
 
-// --- SPA Fallback ---
-// This must come after static middleware and all API routes.
-// It sends index.html for any GET request that doesn't match a known API or static file.
-app.get('*', (req, res) => {
-  res.sendFile(path.join(publicPath, 'index.html'));
+// 3. API 404 Handler. This MUST come after all other API routes.
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ error: 'API route not found' });
 });
 
-// --- Final Error Handlers ---
-// These are placed last to catch any requests that have fallen through.
+// 4. SPA Fallback. This MUST come after API routes to avoid catching API 404s.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(publicPath, 'index.html'), (err) => {
+    if (err) {
+      console.error('SPA Fallback Error:', err);
+      res.status(500).send('Error serving application.');
+    }
+  });
+});
+
+// 5. Final generic error handler. This is the last safety net.
 app.use((err, req, res, _next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
