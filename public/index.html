@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CI/CD Midterm App - API Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section h2 {
+            color: #555;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .success {
+            border-left-color: #28a745;
+            background-color: #d4edda;
+        }
+        .status {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .status.healthy {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status.unhealthy {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 CI/CD Midterm Application</h1>
+        
+        <div id="healthStatus" class="status">
+            Checking health status...
+        </div>
+
+        <div class="section">
+            <h2>🧮 Calculator API</h2>
+            
+            <div class="form-group">
+                <label for="calcA">Number A:</label>
+                <input type="number" id="calcA" value="5">
+            </div>
+            
+            <div class="form-group">
+                <label for="calcB">Number B:</label>
+                <input type="number" id="calcB" value="3">
+            </div>
+            
+            <button onclick="testCalculator('add')">Add</button>
+            <button onclick="testCalculator('subtract')">Subtract</button>
+            
+            <div id="calcResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>📝 String Utils API</h2>
+            
+            <div class="form-group">
+                <label for="stringInput">Text:</label>
+                <input type="text" id="stringInput" value="hello world">
+            </div>
+            
+            <button onclick="testStringUtils('reverse')">Reverse</button>
+            <button onclick="testStringUtils('capitalize')">Capitalize</button>
+            
+            <div id="stringResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>📊 API Information</h2>
+            <div id="apiInfo" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '';
+
+        // Check health status on page load
+        window.onload = function() {
+            checkHealth();
+            getApiInfo();
+        };
+
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                
+                const statusDiv = document.getElementById('healthStatus');
+                if (response.ok) {
+                    statusDiv.className = 'status healthy';
+                    statusDiv.innerHTML = `✅ API is healthy | Uptime: ${Math.round(data.uptime)}s | Last Check: ${new Date().toLocaleTimeString()}`;
+                } else {
+                    statusDiv.className = 'status unhealthy';
+                    statusDiv.innerHTML = '❌ API is unhealthy';
+                }
+            } catch (error) {
+                const statusDiv = document.getElementById('healthStatus');
+                statusDiv.className = 'status unhealthy';
+                statusDiv.innerHTML = '❌ Cannot connect to API - Make sure the server is running on port 3001';
+            }
+        }
+
+        async function getApiInfo() {
+            try {
+                const response = await fetch(`${API_BASE}/`);
+                const data = await response.json();
+                
+                const infoDiv = document.getElementById('apiInfo');
+                infoDiv.style.display = 'block';
+                infoDiv.innerHTML = `
+                    <strong>API Information:</strong><br>
+                    Message: ${data.message}<br>
+                    Version: ${data.version}<br>
+                    Environment: ${data.environment}<br>
+                    Timestamp: ${new Date(data.timestamp).toLocaleString()}
+                `;
+            } catch (error) {
+                console.error('Error fetching API info:', error);
+            }
+        }
+
+        async function testCalculator(operation) {
+            const a = document.getElementById('calcA').value;
+            const b = document.getElementById('calcB').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/calculator/${operation}?a=${a}&b=${b}`);
+                const data = await response.json();
+                
+                const resultDiv = document.getElementById('calcResult');
+                resultDiv.style.display = 'block';
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <strong>✅ ${operation.toUpperCase()} Result:</strong><br>
+                        ${a} ${operation === 'add' ? '+' : '-'} ${b} = <strong>${data.result}</strong><br>
+                        Operation: ${data.operation}
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `<strong>❌ Error:</strong> ${data.error}`;
+                }
+            } catch (error) {
+                const resultDiv = document.getElementById('calcResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<strong>❌ Network Error:</strong> ${error.message}`;
+            }
+        }
+
+        async function testStringUtils(operation) {
+            const text = document.getElementById('stringInput').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/string/${operation}?text=${encodeURIComponent(text)}`);
+                const data = await response.json();
+                
+                const resultDiv = document.getElementById('stringResult');
+                resultDiv.style.display = 'block';
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <strong>✅ ${operation.toUpperCase()} Result:</strong><br>
+                        Original: "${data.original}"<br>
+                        Result: "<strong>${data.result}</strong>"<br>
+                        Operation: ${data.operation}
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `<strong>❌ Error:</strong> ${data.error}`;
+                }
+            } catch (error) {
+                const resultDiv = document.getElementById('stringResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<strong>❌ Network Error:</strong> ${error.message}`;
+            }
+        }
+
+        // Auto-refresh health status every 30 seconds
+        setInterval(checkHealth, 30000);
+    </script>
+</body>
+</html> 
