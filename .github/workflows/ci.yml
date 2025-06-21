@@ -62,6 +62,9 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     outputs:
       digest: ${{ steps.push.outputs.digest }}
+    permissions:
+      contents: read
+      packages: write
     
     steps:
     - name: Checkout code
