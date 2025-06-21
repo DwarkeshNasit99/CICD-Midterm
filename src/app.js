@@ -5,19 +5,6 @@ const stringUtils = require('./stringUtils');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// --- Root endpoint (must come before static files) ---
-app.get('/', (req, res) => {
-  res.json({
-    message: 'CI/CD Midterm Application API',
-    version: '1.0.0',
-    endpoints: {
-      calculator: ['/api/calculator/add', '/api/calculator/subtract'],
-      stringUtils: ['/api/string/reverse', '/api/string/capitalize'],
-      health: '/health'
-    }
-  });
-});
-
 // Define an absolute path to the public directory from the project root
 const publicPath = path.join(__dirname, '..', 'public');
 
@@ -103,13 +90,7 @@ app.use('/api/*', (req, res) => {
   res.status(404).json({ error: 'API route not found' });
 });
 
-// --- 404 for all other routes ---
-app.use('*', (req, res) => {
-  res.status(404).json({ error: 'Route not found' });
-});
-
-// --- Catch-all for client-side routing ---
-// This will serve index.html for any other GET request.
+// Serve index.html for all other GET requests (SPA fallback)
 app.get('*', (req, res) => {
   res.sendFile(path.join(publicPath, 'index.html'));
 });
