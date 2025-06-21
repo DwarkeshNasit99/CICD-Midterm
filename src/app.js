@@ -1,11 +1,12 @@
 const express = require('express');
+const path = require('path');
 const { stringUtils } = require('./stringUtils');
 const calculator = require('./calculator');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Serve static files from the 'public' directory FIRST
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Root endpoint for API documentation or welcome message
 app.get('/api', (req, res) => {
@@ -90,7 +91,7 @@ app.use('/api/*', (req, res) => {
 // This will serve index.html for any other GET request.
 // Useful for single-page applications.
 app.get('*', (req, res) => {
-    res.sendFile('index.html', { root: 'public' });
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 // Export the app before starting the server
