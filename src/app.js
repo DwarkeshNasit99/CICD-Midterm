@@ -5,94 +5,75 @@ const stringUtils = require('./stringUtils');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Define an absolute path to the public directory from the project root
+// Define the absolute path to the public directory
 const publicPath = path.join(__dirname, '..', 'public');
 
-// --- Middleware ---
-// 1. Serve static files from the 'public' directory.
-// This is the first thing the server does. It will automatically handle GET '/'
-// by serving public/index.html if it exists.
+// --- Middleware: Serve Static Files ---
+// This is first. It automatically serves index.html for GET / and other static assets.
 app.use(express.static(publicPath));
 
 // --- API Routes ---
-// All your API endpoints go here.
-
+// All your API endpoints are defined here.
 app.get('/api', (req, res) => {
   res.json({
     message: 'Welcome to the CI/CD Midterm Application API',
     version: '1.0.0',
-    links: [
-      { rel: 'health', href: '/health' },
-      { rel: 'api_root', href: '/api' },
-      { rel: 'calculator_add', href: '/api/calculator/add?a=1&b=2' },
-      { rel: 'calculator_subtract', href: '/api/calculator/subtract?a=5&b=2' },
-      { rel: 'string_reverse', href: '/api/string/reverse?text=hello' },
-      { rel: 'string_capitalize', href: '/api/string/capitalize?text=hello' },
-      { rel: 'string_vowels', href: '/api/string/vowels?text=hello' }
-    ]
+    links: [ { rel: 'health', href: '/health' } ]
   });
 });
 
 app.get('/health', (req, res) => {
-  res.json({
-    status: 'healthy',
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString()
-  });
+  res.json({ status: 'healthy', uptime: process.uptime() });
 });
 
 app.get('/api/calculator/add', (req, res) => {
   const { a, b } = req.query;
   if (!a || !b) return res.status(400).json({ error: 'Both a and b parameters are required' });
-  const result = calculator.add(Number(a), Number(b));
-  res.json({ result, operation: 'add', a: Number(a), b: Number(b) });
+  res.json({ result: calculator.add(Number(a), Number(b)) });
 });
 
 app.get('/api/calculator/subtract', (req, res) => {
   const { a, b } = req.query;
   if (!a || !b) return res.status(400).json({ error: 'Both a and b parameters are required' });
-  const result = calculator.subtract(Number(a), Number(b));
-  res.json({ result, operation: 'subtract', a: Number(a), b: Number(b) });
+  res.json({ result: calculator.subtract(Number(a), Number(b)) });
 });
 
 app.get('/api/string/reverse', (req, res) => {
   const { text } = req.query;
   if (!text) return res.status(400).json({ error: 'text parameter is required' });
-  const result = stringUtils.reverse(text);
-  res.json({ result, original: text, operation: 'reverse' });
+  res.json({ result: stringUtils.reverse(text) });
 });
 
 app.get('/api/string/capitalize', (req, res) => {
   const { text } = req.query;
   if (!text) return res.status(400).json({ error: 'text parameter is required' });
-  const result = stringUtils.capitalize(text);
-  res.json({ result, original: text, operation: 'capitalize' });
+  res.json({ result: stringUtils.capitalize(text) });
 });
 
 app.get('/api/string/vowels', (req, res) => {
   const { text } = req.query;
   if (!text) return res.status(400).json({ error: 'text parameter is required' });
-  const result = stringUtils.countVowels(text);
-  res.json({ result, original: text, operation: 'countVowels' });
+  res.json({ result: stringUtils.countVowels(text) });
 });
 
+
 // --- SPA Fallback ---
-// This must come AFTER static middleware and all API routes.
-// It sends index.html for any GET request that doesn't match an API route or a static file.
+// This comes after static files and API routes. It sends index.html for any
+// other GET request, enabling client-side routing.
 app.get('*', (req, res) => {
   res.sendFile(path.join(publicPath, 'index.html'));
 });
 
 
 // --- Final Error Handlers ---
-// These are placed last to catch any errors from the above routes.
+// These are last. They catch any requests that have fallen through.
 app.use('/api/*', (req, res) => {
   res.status(404).json({ error: 'API route not found' });
 });
 
-app.use((err, req, res, _next) => {
+app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+  res.status(500).send('Something broke!');
 });
 
 
