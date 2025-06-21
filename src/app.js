@@ -5,8 +5,8 @@ const calculator = require('./calculator');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Define an absolute path to the public directory
-const publicPath = path.resolve(__dirname, '..', 'public');
+// Define an absolute path to the public directory from the project root
+const publicPath = path.join(process.cwd(), 'public');
 
 // Serve static files from the 'public' directory FIRST
 app.use(express.static(publicPath));
@@ -93,7 +93,7 @@ app.use('/api/*', (req, res) => {
 // --- Catch-all for client-side routing ---
 // This will serve index.html for any other GET request.
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(publicPath, 'index.html'));
+  res.sendFile(path.join(publicPath, 'index.html'));
 });
 
 // Export the app before starting the server
