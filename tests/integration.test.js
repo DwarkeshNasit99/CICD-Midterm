@@ -2,12 +2,20 @@ const request = require('supertest');
 const app = require('../src/app');
 
 describe('API Integration Tests', () => {
-  describe('GET /', () => {
+  describe('GET /api/welcome', () => {
     test('should return welcome message', async () => {
-      const response = await request(app).get('/');
+      const response = await request(app).get('/api/welcome');
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('message');
       expect(response.body.message).toBe('Welcome to CI/CD Midterm Application');
+    });
+  });
+
+  describe('GET /', () => {
+    test('should return HTML content', async () => {
+        const response = await request(app).get('/');
+        expect(response.status).toBe(200);
+        expect(response.headers['content-type']).toMatch(/html/);
     });
   });
 
@@ -84,10 +92,16 @@ describe('API Integration Tests', () => {
   });
 
   describe('404 handler', () => {
-    test('should return 404 for non-existent routes', async () => {
-      const response = await request(app).get('/non-existent');
+    test('should return 404 for non-existent API routes', async () => {
+      const response = await request(app).get('/api/non-existent');
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty('error', 'Route not found');
+      expect(response.body).toHaveProperty('error', 'API route not found');
+    });
+
+    test('should serve index.html for non-API routes (SPA behavior)', async () => {
+      const response = await request(app).get('/non-existent');
+      expect(response.status).toBe(200);
+      expect(response.headers['content-type']).toMatch(/html/);
     });
   });
 }); 

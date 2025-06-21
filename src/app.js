@@ -4,8 +4,25 @@ const calculator = require('./calculator');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Serve static files from the 'public' directory FIRST
+app.use(express.static('public'));
+
+// Root endpoint for API documentation or welcome message
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'Welcome to the CI/CD Midterm Application API',
+    version: '1.0.0',
+    links: {
+      health: '/health',
+      welcome: '/api/welcome',
+      calculator: '/api/calculator',
+      string: '/api/string',
+    }
+  });
+});
+
 // Welcome endpoint
-app.get('/', (req, res) => {
+app.get('/api/welcome', (req, res) => {
   res.json({
     message: 'Welcome to CI/CD Midterm Application',
     version: '1.0.0'
@@ -64,9 +81,16 @@ app.use('/api', (err, req, res, _next) => {
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// --- 404 handler ---
-app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+// --- 404 handler for API ---
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ error: 'API route not found' });
+});
+
+// --- Catch-all for client-side routing ---
+// This will serve index.html for any other GET request.
+// Useful for single-page applications.
+app.get('*', (req, res) => {
+    res.sendFile('index.html', { root: 'public' });
 });
 
 // Export the app before starting the server
