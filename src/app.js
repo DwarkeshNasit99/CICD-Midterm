@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Define an absolute path to the public directory from the project root
-const publicPath = path.join(process.cwd(), 'public');
+const publicPath = path.join(__dirname, '..', 'public');
 
 // Serve static files from the 'public' directory FIRST
 app.use(express.static(publicPath));
