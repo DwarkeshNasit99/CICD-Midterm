@@ -101,12 +101,12 @@ This strategy ensures that code is tested and deployed to a staging-like environ
 
 The application exposes the following API endpoints:
 
-### Calculator API
+## Calculator API
 *   `GET /api/add?a=<num>&b=<num>`
 *   `GET /api/subtract?a=<num>&b=<num>`
 *   `GET /api/multiply?a=<num>&b=<num>`
 *   `GET /api/divide?a=<num>&b=<num>`
 
-### String Utils API
+## String Utils API
 *   `GET /api/capitalize?str=<string>`
 *   `GET /api/reverse?str=<string>`
