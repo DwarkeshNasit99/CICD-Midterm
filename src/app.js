@@ -56,26 +56,19 @@ app.get('/api/string/vowels', (req, res) => {
   res.json({ result: stringUtils.countVowels(text) });
 });
 
-
 // --- SPA Fallback ---
-// This comes after static files and API routes. It sends index.html for any
-// other GET request, enabling client-side routing.
+// This must come after static middleware and all API routes.
+// It sends index.html for any GET request that doesn't match a known API or static file.
 app.get('*', (req, res) => {
   res.sendFile(path.join(publicPath, 'index.html'));
 });
 
-
 // --- Final Error Handlers ---
-// These are last. They catch any requests that have fallen through.
-app.use('/api/*', (req, res) => {
-  res.status(404).json({ error: 'API route not found' });
-});
-
+// These are placed last to catch any requests that have fallen through.
 app.use((err, req, res, _next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });
-
 
 // --- Server Start ---
 if (require.main === module) {
