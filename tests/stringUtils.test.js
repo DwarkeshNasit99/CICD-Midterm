@@ -1,4 +1,4 @@
-const { stringUtils } = require('../src/stringUtils');
+const stringUtils = require('../src/stringUtils');
 
 describe('String Utils Tests', () => {
   describe('reverse function', () => {
