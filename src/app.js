@@ -24,6 +24,10 @@ app.get('/api', (req, res) => {
   });
 });
 
+app.get('/api/welcome', (req, res) => {
+  res.json({ message: 'Welcome to CI/CD Midterm Application' });
+});
+
 app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
