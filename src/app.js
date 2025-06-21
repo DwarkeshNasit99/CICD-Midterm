@@ -1,5 +1,7 @@
 const express = require('express');
 const path = require('path');
+const calculator = require('./calculator');
+const stringUtils = require('./stringUtils');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -120,4 +122,4 @@ if (require.main === module) {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
-module.exports = app;
+module.exports = { app, calculator, stringUtils };
