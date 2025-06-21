@@ -20,12 +20,17 @@ app.use(express.static(publicPath));
 app.get('/api', (req, res) => {
   res.json({
     message: 'Welcome to the CI/CD Midterm Application API',
-    version: '1.0.0'
+    version: '1.0.0',
+    links: [
+      { rel: 'health', href: '/health' },
+      { rel: 'api_root', href: '/api' },
+      { rel: 'calculator_add', href: '/api/calculator/add?a=1&b=2' },
+      { rel: 'calculator_subtract', href: '/api/calculator/subtract?a=5&b=2' },
+      { rel: 'string_reverse', href: '/api/string/reverse?text=hello' },
+      { rel: 'string_capitalize', href: '/api/string/capitalize?text=hello' },
+      { rel: 'string_vowels', href: '/api/string/vowels?text=hello' }
+    ]
   });
-});
-
-app.get('/api/welcome', (req, res) => {
-  res.json({ message: 'Welcome to CI/CD Midterm Application' });
 });
 
 app.get('/health', (req, res) => {
