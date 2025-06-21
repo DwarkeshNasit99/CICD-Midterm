@@ -18,7 +18,7 @@ This project is a simple Node.js application built with Express. It provides a w
 Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
 
-### Installation and Running Locally
+## Installation and Running Locally
 
 1.  **Clone the repository:**
 ```bash
@@ -49,7 +49,7 @@ This will execute all unit and integration tests and generate a coverage report 
 
 The CI/CD pipeline is defined in the `.github/workflows/ci.yml` file and is the core of this project. It's designed to ensure code quality and automate the deployment process.
 
-### Workflow Triggers
+## Workflow Triggers
 
 The workflow is automatically triggered by the following events:
 *   **Push:** On any push to the `main` or `develop` branches.
